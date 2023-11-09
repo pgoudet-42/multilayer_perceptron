@@ -1,11 +1,11 @@
 import numpy as np
 
-def softmax(x):
-    e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum(axis=0)
+def softmax(X):
+    e_x = np.exp(X)
+    return e_x / np.sum(e_x)
 
 def log_loss(A, y):
-    return 1 / len(y) * np.sum(-y * np.log(A) - (1 - y) * np.log(1 - A))
+    return -(1 / len(y)) * np.sum(y * np.log(A))
 
 def initialisation(dim: list):
     params = {}
@@ -18,12 +18,19 @@ def initialisation(dim: list):
     return params
 
 def forwardPropagation(X, params: dict):
-    activations = {"A0": X}
+    activations = {"A0": X.T}
     C = len(params) // 2
     
     for c in range(1, C + 1):
+        print("c:", c)
+        print("W" + str(c) + ":", params["W" + str(c)].shape)
+        print("A" + str(c -1) + ":", activations["A" + str(c - 1)].shape)
+        print("b" + str(c) + ":", params["b" + str(c)].shape)
+        print("resultat:", params["W" + str(c)].dot(activations["A" + str(c - 1)]  + params["b" + str(c)] ) )
+
         Z = params["W" + str(c)].dot(activations["A" + str(c - 1)]) + params["b" + str(c)]
         activations["A" + str(c)] = 1 / (1 + np.exp(-Z))
+
     
     return activations
 
@@ -54,4 +61,5 @@ def predict(X, parametres):
     activations = forwardPropagation(X, parametres)
     C = len(parametres) // 2
     Af = activations['A' + str(C)]
+    print(Af)
     return Af >= 0.5

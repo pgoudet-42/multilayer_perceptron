@@ -46,13 +46,13 @@ def getData(file: str):
     for i, _ in enumerate(etiquettes_training):  etiquettes_training[i] = 0 if etiquettes_training[i] == 'B' else  1
     etiquettes_training = np.array(etiquettes_training)
     etiquettes_training = etiquettes_training.astype(int)
-    etiquettes_training = etiquettes_training.reshape(-1, 1)
+    # etiquettes_training = etiquettes_training.reshape(-1, 1)
     
-    etiquettes_test = training_set[:, 1]
+    etiquettes_test = test_set[:, 1]
     for i, _ in enumerate(etiquettes_test):  etiquettes_test[i] = 0 if etiquettes_test[i] == 'B' else  1
     etiquettes_test = np.array(etiquettes_test)
     etiquettes_test = etiquettes_test.astype(int)
-    etiquettes_test = etiquettes_test.reshape(-1, 1)
+    # etiquettes_test = etiquettes_test.reshape(-1, 1)
     
     training_set = np.delete(training_set, (0, 1), axis=1)
     training_set = training_set.astype(float)

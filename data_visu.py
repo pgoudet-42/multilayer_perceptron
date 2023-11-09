@@ -4,18 +4,20 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 from load_data import getData
 import numpy as np
+import os 
+os.environ['MPLCONFIGDIR'] = os.getcwd() + "/configs/"
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+import seaborn as sns
+import pandas as pd
 
-from test import test_prog
 
-def display_sets(data, explained_variance_ratio):
-    plt.figure(figsize=(8, 6))
-    plt.scatter(data[:,0], data[:,1])
-    plt.xlabel(f'{round(explained_variance_ratio[0], 2) * 100}%')
-    plt.ylabel(f'{round(explained_variance_ratio[1], 2) * 100}%')
-    plt.show()
+def display_sets(data):
+    ...
+    # df = pd.DataFrame(data)
+    # sns.pairplot(df, height=1.4, aspect=15/10, , corner=0)
+    # plt.show()
 
 def afd(data, etiquette):
     # pca = PCA(n_components=2)
@@ -55,7 +57,7 @@ def custom_acp(X, n_components):
     return transformed_X
 
 def visualization():
-    training_set, _ = getData("data.csv")
+    training_set, _, _, _ = getData("data.csv")
     
     etiquettes = training_set[:, 1]
     for i, _ in enumerate(etiquettes):  etiquettes[i] = 0 if etiquettes[i] == 'B' else  1
@@ -67,12 +69,14 @@ def visualization():
     
     scaler = StandardScaler()
     scaler.fit_transform(training_set)
-    n_components = 10
-    pc1 = custom_acp(training_set, n_components)
-    display_sets(pc1, (0,0))
-    pc1 = acp(training_set, n_components)
-    display_sets(pc1, (0,0))
-    test_prog(pc1, etiquettes)
+    display_sets(training_set)
+
+    # n_components = 10
+    # pc1 = custom_acp(training_set, n_components)
+    # display_sets(pc1, (0,0))
+    # pc1 = acp(training_set, n_components)
+    # display_sets(pc1, (0,0))
+    # test_prog(pc1, etiquettes)
     
 
 if __name__ == "__main__":

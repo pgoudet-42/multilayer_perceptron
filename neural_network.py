@@ -6,22 +6,28 @@ from tqdm import tqdm
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
+from sklearn.datasets import make_blobs
+
 from load_data import getData
 
-def neuralNetwork(X, y, hidden_layers=(30,30,30), learning_rate=0.1, n_iter=1000):
+def neuralNetwork(X, y, hidden_layers=(30,30), learning_rate=0.1, n_iter=10):
     np.random.seed(0)
     dimensions = list(hidden_layers)
-    dimensions.insert(0, X.shape[0])
+    dimensions.insert(0, X.shape[1])
     dimensions.append(y.shape[0])
-    parametres = model.initialisation(dimensions)
-    # for k,v in parametres.items():
-    #     print(k, v.shape)
-    
+    parametres = model.initialisation([2, 30, 30, 1])
+    for k,v in parametres.items():
+        print(k, v.shape)
+    activations = model.forwardPropagation(X, parametres)
+    for k,v in activations.items():
+        print(k, v.shape)
     train_loss = []
     train_acc = []
     
     for i in tqdm(range(n_iter)):
         activations = model.forwardPropagation(X, parametres)
+        # for k,v in parametres.items():
+        #   print(k, v.shape)
         gradients = model.backPropagation(y, activations, parametres)
         parametres = model.update(gradients, parametres, learning_rate)
         
@@ -41,9 +47,15 @@ def neuralNetwork(X, y, hidden_layers=(30,30,30), learning_rate=0.1, n_iter=1000
     plt.subplot(1,2,2)
     plt.plot(train_acc, label="train accuracy")
     plt.legend()
-    plt.show()
+    # plt.show()
     
 if __name__ == "__main__":
-    training_set, y_training, test_set, y_test = getData("data.csv")
-    neuralNetwork(training_set, y_training)
+    # train_X, train_y, test_X, test_y = getData("data.csv")
+    # print(train_X.shape)
+    # print(train_y.shape)
+    # print(test_X.shape)
+    # print(test_y.shape)
+    X, y= make_blobs(n_samples=100, n_features=2, centers=2, random_state=8)
+    y = y.reshape((y.shape[0], 1))
+    neuralNetwork(X, y)
     exit(1)
