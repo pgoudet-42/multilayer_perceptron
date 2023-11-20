@@ -4,12 +4,16 @@ from sklearn.metrics import accuracy_score, log_loss
 def softmax(X):
     e_x = np.exp(X)
     return e_x / np.sum(e_x)
+    
+def sigmoid(X):
+    return 1 / (1 + np.exp(-X))
+    
+def relu(a):
+    return np.maximum(0, a)
 
 def initialisation(dimensions):
-    
     parametres = {}
     C = len(dimensions)
-
     np.random.seed(1)
 
     for c in range(1, C):
@@ -19,23 +23,21 @@ def initialisation(dimensions):
     return parametres
 
 def forwardPropagation(X, parametres):
-  
-  activations = {'A0': X}
-
-  C = len(parametres) // 2
-
-  for c in range(1, C + 1):
-
-    Z = parametres['W' + str(c)].dot(activations['A' + str(c - 1)]) + parametres['b' + str(c)]
-    activations['A' + str(c)] = 1 / (1 + np.exp(-Z))
-
-  return activations
-
-def backPropagation(y, parametres, activations):
-
-    m = y.shape[1]
+    activations = {'A0': X}
     C = len(parametres) // 2
 
+    for c in range(1, C + 1):
+        Z = parametres['W' + str(c)].dot(activations['A' + str(c - 1)]) + parametres['b' + str(c)]
+        if c == C + 1:
+            activations['A' + str(c)] = softmax(Z)    
+        else:
+            activations['A' + str(c)] = sigmoid(Z)
+
+    return activations
+
+def backPropagation(y, parametres, activations):
+    m = y.shape[1]
+    C = len(parametres) // 2
     dZ = activations['A' + str(C)] - y
     gradients = {}
 
@@ -48,7 +50,6 @@ def backPropagation(y, parametres, activations):
     return gradients
 
 def update(gradients, parametres, learning_rate):
-
     C = len(parametres) // 2
 
     for c in range(1, C + 1):
