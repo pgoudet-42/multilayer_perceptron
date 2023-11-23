@@ -9,4 +9,4 @@ def sigmoid(X):
     return 1 / (1 + np.exp(-X))
     
 def relu(a):
-    return np.maximum(0, a)
+    return np.maximum(0.0, a)

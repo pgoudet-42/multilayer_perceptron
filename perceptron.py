@@ -5,8 +5,12 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, log_loss
 
+
+# def log_loss(A, y):
+#     return 1 / len(y) * np.sum(-y * np.log(A) - (1 - y) * np.log(1 - A))
+
+
 def display(training_history):
-      print("accuracy:", training_history[-1, 1])
       plt.figure(figsize=(12, 4))
       plt.subplot(1, 2, 1)
       plt.plot(training_history[:, 0], label='train loss')
@@ -37,10 +41,7 @@ class Perceptron():
 
         for c in range(1, C + 1):
             Z = parametres['W' + str(c)].dot(activations['A' + str(c - 1)]) + parametres['b' + str(c)]
-            if c == C + 1:
-                activations['A' + str(c)] = softmax(Z)    
-            else:
-                activations['A' + str(c)] = sigmoid(Z)
+            activations['A' + str(c)] = self.layers[c - 1].activation(Z)
         return activations
     
     def backPropagation(self, y, parametres, activations):
@@ -66,7 +67,6 @@ class Perceptron():
     def fit(self, data_train, data_valid, learning_rate=0.01, epochs=100):
         parametres = self.initialisation()
         training_history = np.zeros((int(epochs), 2))
-
         C = len(parametres) // 2
 
         for i in tqdm(range(epochs)):
@@ -78,7 +78,11 @@ class Perceptron():
             training_history[i, 0] = (log_loss(data_valid.flatten(), Af.flatten()))
             y_pred = self.predict(data_train, parametres)
             training_history[i, 1] = (accuracy_score(data_valid.flatten(), y_pred.flatten()))
+            print(f"epoch {i}/{epochs - 1} - loss: {training_history[i, 0]}- accuracy: {training_history[i, 1]}")
+
+        print("Accuracy Training:", training_history[-1, 1])
         display(training_history)
+        return (parametres)
 
     def predict(self, X, parametres):
         activations = self.forwardPropagation(X, parametres)
