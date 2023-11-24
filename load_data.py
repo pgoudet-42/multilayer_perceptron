@@ -20,9 +20,9 @@ def readCSV(file:str) -> list:
             print("error:", e.args)
     return data
 
-def splitData(data) -> tuple:
+def splitData(data, percent_of_train) -> tuple:
     training = []
-    training_size = int(0.7 * len(data))
+    training_size = int(percent_of_train * len(data))
     indexs = set()
     
     while len(indexs) < training_size:
@@ -38,30 +38,33 @@ def splitData(data) -> tuple:
     training = np.array(training)
     return (training, test)
 
-def getData(file: str):
-    data: list = readCSV(file)
-    training_set, test_set = splitData(data)
-    
-    etiquettes_training = training_set[:, 1]
-    for i, _ in enumerate(etiquettes_training):  etiquettes_training[i] = 0 if etiquettes_training[i] == 'B' else  1
-    etiquettes_training = np.array(etiquettes_training)
-    etiquettes_training = etiquettes_training.astype(int)
-    
-    etiquettes_test = test_set[:, 1]
-    for i, _ in enumerate(etiquettes_test):  etiquettes_test[i] = 0 if etiquettes_test[i] == 'B' else  1
-    etiquettes_test = np.array(etiquettes_test)
-    etiquettes_test = etiquettes_test.astype(int)
-    
-    training_set = np.delete(training_set, (0, 1), axis=1)
-    training_set = training_set.astype(float)
-    test_set = np.delete(test_set, (0, 1), axis=1)
-    test_set = test_set.astype(float)
+def getEtiquettes(set):
+    etiquettes = set[:, 1]
+    for i, _ in enumerate(etiquettes):  etiquettes[i] = 0 if etiquettes[i] == 'B' else  1
+    etiquettes = np.array(etiquettes)
+    etiquettes = etiquettes.astype(int)
+    return etiquettes
 
+def getData(file: str, percent_of_train: float):
+    try:
+        data: list = readCSV(file)
+        training_set, test_set = splitData(data, percent_of_train)
+        
+        etiquettes_training = getEtiquettes(training_set)
+        etiquettes_test = getEtiquettes(test_set)
+        
+        training_set = np.delete(training_set, (0, 1), axis=1)
+        training_set = training_set.astype(float)
+        test_set = np.delete(test_set, (0, 1), axis=1)
+        test_set = test_set.astype(float)
 
-    scaler = StandardScaler()
-    scaler.fit_transform(training_set)
-    print("x_train shape:", training_set.shape)
-    print("x_valid shape:", test_set.shape)
+        scaler = StandardScaler()
+        scaler.fit_transform(training_set)
+        print("x_train shape:", training_set.shape)
+        print("x_valid shape:", test_set.shape)
+    except Exception as e:
+        print(e.args)
+        exit(1)
     return (training_set, etiquettes_training, test_set, etiquettes_test)
     
     

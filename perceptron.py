@@ -1,13 +1,11 @@
 import numpy as np
-from activations import softmax, sigmoid, relu
+from activations import softmax, sigmoid, relu, log_loss
 from layer import Layer
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from sklearn.metrics import accuracy_score, log_loss
-
-
-# def log_loss(A, y):
-#     return 1 / len(y) * np.sum(-y * np.log(A) - (1 - y) * np.log(1 - A))
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from layer import Layer
 
 
 def display(training_history):
@@ -21,10 +19,12 @@ def display(training_history):
       plt.show()
 
 class Perceptron():
-    def __init__(self, layers: list) -> None:
-        self.nb_layers = len(layers)
-        self.layers = layers
-        self.dimensions = [obj.dimension for obj in layers]
+    def __init__(self, input_layer: int, output_layer: int, layers: tuple, activation: str = "sigmoid") -> None:
+        self.nb_layers = layers[1] + 2
+        self.layers = [Layer(input_layer, activation=activation)]
+        self.layers.extend([Layer(layers[0], activation=activation) for i in range(layers[1])])
+        self.layers.append(Layer(output_layer, activation='softmax'))
+        self.dimensions = [obj.dimension for obj in self.layers]
     
     def initialisation(self):
         parametres = {}
@@ -78,10 +78,10 @@ class Perceptron():
             training_history[i, 0] = (log_loss(data_valid.flatten(), Af.flatten()))
             y_pred = self.predict(data_train, parametres)
             training_history[i, 1] = (accuracy_score(data_valid.flatten(), y_pred.flatten()))
-            print(f"epoch {i}/{epochs - 1} - loss: {training_history[i, 0]}- accuracy: {training_history[i, 1]}")
+            print(f"epoch {i}/{epochs - 1:.4f} - loss: {training_history[i, 0]:.4f}- accuracy: {training_history[i, 1]:.4f}")
 
         print("Accuracy Training:", training_history[-1, 1])
-        display(training_history)
+        # display(training_history)
         return (parametres)
 
     def predict(self, X, parametres):
