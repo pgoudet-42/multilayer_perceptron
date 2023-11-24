@@ -15,7 +15,6 @@ def sigmoid(X):
 def relu(a):
     return np.maximum(0, a)
 
-
 def log_loss(y_true, y_pred, *, eps="auto", normalize=True):
     n = len(y_true)
     loss = -(xlogy(y_true, y_pred) + xlogy(1 - y_true, 1 - y_pred)).sum()

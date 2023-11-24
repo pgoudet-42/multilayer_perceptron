@@ -1,12 +1,10 @@
 import numpy as np
-from activations import softmax, sigmoid, relu, log_loss
+from activations import log_loss
 from layer import Layer
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import StandardScaler
 from layer import Layer
-
 
 def display(training_history):
       plt.figure(figsize=(12, 4))
@@ -69,7 +67,7 @@ class Perceptron():
         training_history = np.zeros((int(epochs), 2))
         C = len(parametres) // 2
 
-        for i in tqdm(range(epochs)):
+        for i in range(epochs):
             activations = self.forwardPropagation(data_train, parametres)
             gradients = self.backPropagation(data_valid, parametres, activations)
             parametres = self.update(gradients, parametres, learning_rate)
