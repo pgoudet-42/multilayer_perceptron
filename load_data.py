@@ -63,7 +63,7 @@ def getData(file: str, percent_of_train: float):
         print("x_train shape:", training_set.shape)
         print("x_valid shape:", test_set.shape)
     except Exception as e:
-        print(e.args)
+        print("Error:", e.args)
         exit(1)
     return (training_set, etiquettes_training, test_set, etiquettes_test)
     
